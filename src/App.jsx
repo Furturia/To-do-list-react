@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Card from "./Components/Card";
 import Form from "./Components/Form";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 const App = () => {
   const [todoList, setTodoList] = useState([
@@ -31,31 +32,34 @@ const App = () => {
   }
 
   function onCreate(todo) {
-    setTodoList([...todoList, {
-      id: todoList.length,
-      name: todo.name,
-      des: todo.des,
-      done: false,
-    }])
+    setTodoList([
+      ...todoList,
+      {
+        id: todoList.length + 1,
+        name: todo.name,
+        des: todo.des,
+        done: false,
+      },
+    ]);
+    setIsCreate(!isCreate);
   }
+  const navigate = useNavigate()
 
   return (
     <div>
-      {isCreate && (
-        <div>
-          <Form onCreate={onCreate} />
-        </div>
-      )}
+      <Outlet context={{ onCreate: onCreate }} />
+      
       <div>
-        <button onClick={() => setIsCreate(!isCreate)}>+</button>
+        <button onClick={() => navigate("/createTodo",{onCreate : onCreate})}>+</button>
         {todoList.map((todo) => {
           return (
-            <Card
-              key={todo.id}
-              todo={todo}
-              onToggle={onToggle}
-              onDelete={onDelete}
-            />
+            
+              <Card key={todo.id}
+                todo={todo}
+                onToggle={onToggle}
+                onDelete={onDelete}
+              />
+           
           );
         })}
       </div>
